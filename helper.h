@@ -1,0 +1,1 @@
+int* convert_position_to_int(const char* position);
