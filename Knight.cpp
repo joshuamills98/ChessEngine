@@ -1,18 +1,14 @@
 #include "Knight.h"
 
-Knight::Knight(int colour) : ChessPiece(colour, "Knight") {}
+Knight::Knight(int colour) : ChessPiece(colour, knight) {}
 
 bool Knight::check_move(const char* initial_pos,
-                        const char* final_pos,
-                        bool const is_attacking)
+                        const char* final_pos)
 {
-    int* initial_pos_int = convert_position_to_int(initial_pos);
-    int column_0 = initial_pos_int[0];
-    int row_0 = initial_pos_int[1];
-
-    int* final_pos_int = convert_position_to_int(final_pos);
-    int column_1 = final_pos_int[0];
-    int row_1 = final_pos_int[1]; 
+    int row_0 = '8' - initial_pos[1]; 
+    int column_0 = initial_pos[0] - 'A';
+    int row_1 = '8' - final_pos[1];
+    int column_1 = final_pos[0] - 'A';
 
     if ((row_1 == row_0+2 && column_1 == column_0+1) ||
         (row_1 == row_0-2 && column_1 == column_0+1) ||
@@ -25,5 +21,7 @@ bool Knight::check_move(const char* initial_pos,
     {
         return true;
     }
+    piece_move_error_message(initial_pos,
+                             final_pos);
     return false;
 } 
