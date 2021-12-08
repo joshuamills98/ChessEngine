@@ -2,7 +2,7 @@
 
 // =========== Class Constructor/Destructor ==========
 
-ChessBoard::ChessBoard() : turn(white)
+ChessBoard::ChessBoard() : turn(white), is_in_check(false)
 {
     std::cout << "A new chess game is started!" << std::endl;
     // Initiate first two rows for white and black
@@ -89,6 +89,7 @@ ChessBoard::~ChessBoard()
 
 void ChessBoard::resetBoard()
 {
+    turn = white;
     delete_all_pieces();
     create_all_pieces();
 }
@@ -224,6 +225,145 @@ bool ChessBoard::check_not_attacking_own_team(const char* initial_pos,  const ch
     return true;
 }
 
+// ========= Lower level checks ========
+
+bool ChessBoard::check_pawn(const char* initial_pos,  
+                            const char* final_pos,
+                            bool &en_passant_attack) const
+{
+
+    int column_0 = initial_pos[0] - 'A';
+    int row_0 = '8' - initial_pos[1];
+    int column_1 = final_pos[0] - 'A';
+    int row_1 = '8' - final_pos[1];
+
+    ChessPiece* pawn_piece = chessboard[row_0][column_0];
+    
+    if ((abs(row_1-row_0) != abs(column_1-column_0))) // If not moving diagonally
+    {
+        return true; 
+    } 
+    else
+    {
+        // There are only two cases in which a diagonal move is acceptable
+        // Case 1: A direct capture
+        if (chessboard[row_1][column_1])
+        {
+            return true;
+        }
+
+        // Case 2: An "en passant"
+        // First get the position of the piece under threat from En Passant
+        int attacked_piece_row = row_1 + pawn_piece->get_colour(); // It will be one row behind the attacking piece
+        int attacked_piece_column = column_1;
+
+        if (chessboard[attacked_piece_row][attacked_piece_column] == nullptr) // If no piece exists there
+        {
+            return false;
+        }
+
+        ChessPiece* attacked_piece = chessboard[attacked_piece_row][attacked_piece_column];
+        if ((attacked_piece->get_piece_type() == pawn) &&  // If piece being attacked is a pawn
+            (attacked_piece->get_en_passant_flag()) && // If it is in a position where EP is applicable
+            !chessboard[row_1][column_1]) // If no piece is in the way
+        {
+            en_passant_attack = true;
+            return true;
+        }
+    return false;
+    }
+
+}
+
+// ========= Check/Check-Mate functions =======
+bool ChessBoard::in_check()
+{
+
+    // Get position of king
+    char king_pos[2]; 
+    for (int row = '8'; row>=1; row--)
+        {
+            for (int column = 'A'; column<='H'; column++)
+            {
+                if ((chessboard['8'-row][column-'A']) && // Piece exists 
+                   (chessboard['8'-row][column-'A']->get_colour() == turn) && // Is white
+                   (chessboard['8'-row][column-'A']->get_piece_type() == king) // Is a king
+                   )
+                {
+                      king_pos[0] = column;
+                      king_pos[1] = row;
+                      goto findAttackers;
+                }
+            }
+        }
+
+    findAttackers:
+
+        char attacker_pos[2];
+        for (int row = '8'; row>=1; row--)
+        {
+            for (int column = 'A'; column<='H'; column++)
+            {
+                if ((chessboard['8'-row][column-'A']) &&
+                    (chessboard['8'-row][column-'A']->get_colour() == (turn == white ? black : white)) &&
+                    (chessboard['8'-row][column-'A']->get_piece_type() != king)) // King can't put another king in check 
+                {
+                    ChessPiece* attacking_piece = chessboard['8'-row][column-'A'];
+                    attacker_pos[0] = column;
+                    attacker_pos[1] = row;
+                    
+                    if (attacking_piece->get_piece_type() == pawn) // Pawn can't check in every direction unlike other pieces
+                    {
+                        int column_king = king_pos[0] - 'A';
+                        int row_king = '8' - king_pos[1];
+                        int column_attacker = attacker_pos[0] - 'A';
+                        int row_attacker = '8' - attacker_pos[1];
+                        if ((abs(column_king - column_attacker) == 1) && // If one column to the left or right
+                            (row_king == row_attacker-attacking_piece->get_colour())) // Row above attacking piece (by direction)
+                        {
+                            return true;
+                        }
+
+                    } else if (check_move_not_crossing(attacker_pos, king_pos) && // All other pieces ue normal moves to check
+                        attacking_piece->check_move(attacker_pos, king_pos)) // Check for no obstructing pieces and valid move
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false; // If no attackers satisfy that condition
+}
+// ========= Flag setter =========
+void ChessBoard::set_flags(const char* initial_pos,  const char* final_pos)
+{
+    int row_0 = '8' - initial_pos[1]; 
+    int column_0 = initial_pos[0] - 'A';
+    int row_1 = '8' - final_pos[1];
+    int column_1 = final_pos[0] - 'A';
+
+    ChessPiece* chess_piece = chessboard[row_1][column_1];
+    if (chess_piece->get_piece_type() == pawn) // If a pawn has been moved
+    {
+        if (!chess_piece->get_move_flag()) // If this is the Pawn's first move
+        {
+            chess_piece->set_move_flag(); //Set the move flag to true
+
+            // If pawn has moved two squares and can be taken 
+            // through en passant (can only happen on first move)
+            if ((abs(row_1-row_0) ==2) && (column_1==column_0))
+            {
+                chess_piece->set_en_passant_flag(true);
+            }
+        }
+        else{ // If pawn had already moved prior to check
+        chess_piece->set_en_passant_flag(false); // It can no longer be captured via EP
+        }
+    }
+}
+
+
+
 // ========= Move submission ========
 
 void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
@@ -235,18 +375,39 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
             int column_0 = initial_pos[0] - 'A';
             int row_1 = '8' - final_pos[1];
             int column_1 = final_pos[0] - 'A';
+            ChessPiece* chess_piece = chessboard[row_0][column_0];
+            ChessPiece* attacked_position = chessboard[row_1][column_1];
 
-            if (chessboard[row_0][column_0]->check_move(initial_pos, final_pos))
+            // If move is valid based on individual piece rules
+            if (chess_piece->check_move(initial_pos, final_pos)) 
             {
                 std::string captured_piece_name;
-                int captured_colour;
-                if (chessboard[row_1][column_1]!=nullptr) // If killing another piece
+                int captured_colour; 
+                bool en_passant_attack = false;
+
+                if (chess_piece->get_piece_type() == pawn)
+                {
+                    check_pawn(initial_pos,  
+                               final_pos,
+                               en_passant_attack);
+                }
+
+                if (attacked_position) // If direct capture of another piece
                 {
                     capture_flag = true;
                     captured_piece_name = piece_lookup(chessboard[row_1][column_1]->get_piece_type());
                     captured_colour = chessboard[row_1][column_1]->get_colour();
                     delete chessboard[row_1][column_1];
                 }
+                else if (en_passant_attack) // en_passant attack and direct capture can't happen at the same time
+                {
+                    capture_flag = true;
+                    captured_piece_name = piece_lookup(chessboard[row_1+chess_piece->get_colour()][column_1]->get_piece_type());
+                    captured_colour = chessboard[row_1+chess_piece->get_colour()][column_1]->get_colour();
+                    delete chessboard[row_1+chess_piece->get_colour()][column_1];
+                    chessboard[row_1+chess_piece->get_colour()][column_1] = nullptr;
+                }
+
                 chessboard[row_1][column_1]= chessboard[row_0][column_0];
 
                 std::cout << (chessboard[row_0][column_0]->get_colour() == black ? "Black" : "White")
@@ -254,19 +415,24 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
                         << " moves from " << initial_pos
                         << " to " << final_pos;
                         
-                        if (capture_flag)
-                        {
-                        std::cout << " taking " 
-                                  << (captured_colour == black ? "Black's " : "White's ")
-                                  << captured_piece_name;
-                        }
-                    
-                        std::cout << std::endl;
+                if (capture_flag)
+                {
+                    std::cout << " taking " 
+                              << (captured_colour == black ? "Black's " : "White's ")
+                              << captured_piece_name;
+                }
+            
+                std::cout << std::endl;
 
 
                 chessboard[row_0][column_0] = nullptr;
                 print_board();
+                set_flags(initial_pos, final_pos);
                 this->turn = (this->turn == white ? black : white);
+                if (in_check())
+                {
+                    std::cout << (this->turn == white ? "White " : "Black ") << "is in check" << std::endl;
+                }
             }
         }
 }

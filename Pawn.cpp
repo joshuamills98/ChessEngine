@@ -1,6 +1,6 @@
 #include "Pawn.h"
 
-Pawn::Pawn(int colour) : ChessPiece(colour, pawn) , has_moved(false) {}
+Pawn::Pawn(int colour) : ChessPiece(colour, pawn) , has_moved(false), en_passant(false) {}
 
 bool Pawn::check_move(const char* initial_pos,
                       const char* final_pos) 
@@ -15,18 +15,23 @@ bool Pawn::check_move(const char* initial_pos,
         // Case 1: pawn hasn't yet moved
         if (!has_moved)
         {
-            if (((abs(row_1-row_0)<=2) && (column_0==column_1)) || // Two positions or 1 ahead
-                ((abs(row_1-row_0)==abs(column_1-column_0)) && (row_1==row_0-colour))) // Taking diagonally forward
-                {
-                    return true;
-                }
+            if ((abs(row_1-row_0)<=2) && (column_0==column_1)) // Moving 2 or 1 positions ahead
+            {
+                return true;
+            }
+
+            if ((abs(row_1-row_0)==abs(column_1-column_0)) && (row_1==row_0-colour)) // Taking diagonally forward
+            {
+                return true;
+            }
+
             piece_move_error_message(initial_pos,
                                      final_pos);
             return false;
         }
         else // Case 2: pawn has moved already
         {
-            if (((abs(row_1-row_0)==1) && (column_0==column_1)) || // Two positions or 1 ahead
+            if (((abs(row_1-row_0)==1) && (column_0==column_1)) || // 1 position ahead
                 ((abs(row_1-row_0)==abs(column_1-column_0)) && (row_1==row_0-colour))) // Taking diagonally forward
                 {
                     return true;

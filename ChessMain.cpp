@@ -77,3 +77,29 @@ int main() {
 
 	return 0;
 }
+
+// int main() {
+
+// 	ChessBoard cb;
+
+// 	cout << "=========================\n";
+// 	cout << "Alekhine vs. Vasic (1931)\n";
+// 	cout << "=========================\n\n";
+
+// 	cb.resetBoard();
+// 	cout << '\n';
+
+// 	cb.submitMove("E2", "E4");
+// 	cb.submitMove("D7", "D5");
+// 	cout << '\n';
+
+// 	cb.submitMove("H2", "H3");
+// 	cb.submitMove("D5", "D4");
+// 	cout << '\n';
+
+// 	cb.submitMove("H3", "H4");
+// 	cb.submitMove("D4", "E3");
+// 	cout << '\n';
+
+// 	return 0;
+// }

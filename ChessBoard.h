@@ -14,6 +14,7 @@ class ChessBoard
 {
     ChessPiece* chessboard[8][8];
     int turn; // Whose turn is it?
+    bool is_in_check;
 
     public:
         ChessBoard();
@@ -33,6 +34,17 @@ class ChessBoard
         bool check_move_not_null(const char* initial_pos,  const char* final_pos) const;
         bool check_move_not_crossing(const char* initial_pos,  const char* final_pos) const;
         bool check_not_attacking_own_team(const char* initial_pos,  const char* final_pos) const;
+
+        // ========= Lower level checks ========
+        bool check_pawn(const char* initial_pos,
+                        const char* final_pos, 
+                        bool &en_passant_attack) const;
+
+        // ========= Check/Check-Mate functions =======
+        bool in_check();
+
+        // ========= Flag setter =========
+        void set_flags(const char* initial_pos,  const char* final_pos);
 
         void submitMove(const char* initial_pos,  const char* final_pos);
         void print_board();
