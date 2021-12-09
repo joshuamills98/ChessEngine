@@ -2,6 +2,8 @@
 
 Bishop::Bishop(int colour) : ChessPiece(colour, bishop) {}
 
+Bishop::~Bishop() {}
+
 bool Bishop::check_move(const char* initial_pos,
                        const char* final_pos)
 {   
@@ -14,8 +16,8 @@ bool Bishop::check_move(const char* initial_pos,
         {
             return true;
         }
-    piece_move_error_message(initial_pos,
-                             final_pos);
+    // piece_move_error_message(initial_pos,
+    //                          final_pos);
     return false;
 }
 

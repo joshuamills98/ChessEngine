@@ -1,10 +1,6 @@
-#ifndef chesspiece_hpp
-#define chesspiece_hpp
+#ifndef CHESSPIECE_H
+#define CHESSPIECE_H
 
-#include <string.h>
-#include <stdio.h>
-#include <iostream>
-#include "helper.h"
 #include "ChessConstants.h"
 
 class ChessPiece {
@@ -21,14 +17,16 @@ class ChessPiece {
                                 const char* final_pos) = 0;
 
         virtual std::string get_piece_unicode() const = 0;
-        virtual bool get_en_passant_flag();
-        virtual void set_move_flag();
-        virtual void set_en_passant_flag(bool flag);
-        virtual bool get_move_flag();
+        
+        virtual bool get_en_passant_flag(){return true;}
+        virtual void set_move_flag(){}
+        virtual void set_en_passant_flag(bool flag){}
+        virtual bool get_move_flag(){return true;}
+        
         PieceType get_piece_type() {return piece_type;};
         int get_colour() {return colour;};
-        void piece_move_error_message(const char* initial_pos,
-                                      const char* final_pos);
+        // void piece_move_error_message(const char* initial_pos,
+                                    //   const char* final_pos);
 };
 
 #endif // !chesspiece_hpp

@@ -2,6 +2,8 @@
 
 Pawn::Pawn(int colour) : ChessPiece(colour, pawn) , has_moved(false), en_passant(false) {}
 
+Pawn::~Pawn(){}
+
 bool Pawn::check_move(const char* initial_pos,
                       const char* final_pos) 
 {
@@ -24,9 +26,6 @@ bool Pawn::check_move(const char* initial_pos,
             {
                 return true;
             }
-
-            piece_move_error_message(initial_pos,
-                                     final_pos);
             return false;
         }
         else // Case 2: pawn has moved already
@@ -36,13 +35,8 @@ bool Pawn::check_move(const char* initial_pos,
                 {
                     return true;
                 }
-                
-            piece_move_error_message(initial_pos,
-                                     final_pos);
             return false;
         }
     }
-    piece_move_error_message(initial_pos,
-                             final_pos);
     return false;
 }    

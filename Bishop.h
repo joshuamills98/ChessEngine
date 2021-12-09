@@ -1,13 +1,13 @@
-#ifndef bishop_hpp
-#define bishop_hpp
+#ifndef BISHOP_H
+#define BISHOP_H
 
-# include "ChessPiece.h"
+#include "ChessPiece.h"
 
 class Bishop : public ChessPiece {
 
     public:
         Bishop(int colour);
-        ~Bishop() {};
+        ~Bishop();
 
         bool check_move(const char* initial_pos,
                         const char* final_pos) override; 
@@ -15,4 +15,4 @@ class Bishop : public ChessPiece {
 
 };
 
-#endif // !1
+#endif

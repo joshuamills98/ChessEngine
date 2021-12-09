@@ -1,5 +1,5 @@
-#ifndef queen_hpp
-#define queen_hpp
+#ifndef QUEEN_H
+#define QUEEN_H
 
 #include "ChessPiece.h"
 
@@ -7,7 +7,7 @@ class Queen : public ChessPiece {
 
     public:
         Queen(int colour);
-        ~Queen() {};
+        ~Queen();
 
         bool check_move(const char* initial_pos,
                         const char* final_pos) override; 

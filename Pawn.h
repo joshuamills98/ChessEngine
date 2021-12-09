@@ -1,5 +1,5 @@
-#ifndef pawn_hpp
-#define pawn_hpp
+#ifndef PAWN_H
+#define PAWN_H
 
 #include "ChessPiece.h"
 
@@ -10,7 +10,7 @@ class Pawn : public ChessPiece {
 
     public:
         Pawn(int colour);
-        ~Pawn() {};
+        ~Pawn();
 
         bool check_move(const char* initial_position,
                         const char* final_position) override; 

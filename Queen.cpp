@@ -2,6 +2,8 @@
 
 Queen::Queen(int colour) : ChessPiece(colour, queen) {}
 
+Queen::~Queen() {}
+
 bool Queen::check_move(const char* initial_pos,
                        const char* final_pos)
 {

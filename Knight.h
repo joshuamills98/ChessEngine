@@ -1,5 +1,5 @@
-#ifndef knight_hpp
-#define knight_hpp
+#ifndef KNIGHT_H
+#define KNIGHT_H
 
 #include "ChessPiece.h"
 
@@ -7,7 +7,7 @@ class Knight : public ChessPiece {
 
     public:
         Knight(int colour);
-        ~Knight() {};
+        ~Knight();
 
         bool check_move(const char* initial_pos,
                         const char* final_pos) override; 
