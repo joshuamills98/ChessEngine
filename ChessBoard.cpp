@@ -12,35 +12,7 @@
 
 ChessBoard::ChessBoard() : turn(white), game_over(false)
 {
-    // std::cout << "A new chess game is started!" << std::endl;
-    // Initiate first two rows for white and black
-    for (int colour = black; colour <= white; colour += white-black)
-    {
-        chessboard[colour == white ? 7 : 0][0] = new Rook(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][1] = new Knight(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][2] = new Bishop(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][3] = new Queen(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][4] = new King(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][5] = new Bishop(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][6] = new Knight(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][7] = new Rook(colour == black ? black : white);
-        // Initiate pawns
-        
-        for (int column = 'A'; column <= 'H'; column++)
-        {
-            chessboard[colour == white ? 6 : 1][column - 'A'] = new Pawn(colour == black ? black : white);
-        } 
-    }
-
-    // Instantiate the rest as nullptrs
-    for (int column = 'A'; column <= 'H'; column++)
-    {
-        for (int row = '6'; row>= '3'; row--)
-        {
-            chessboard['8'-row][column-'A'] = nullptr;
-        }
-    } 
-
+    this->create_all_pieces();
 }
 
 ChessBoard::~ChessBoard()
@@ -51,13 +23,12 @@ ChessBoard::~ChessBoard()
 
 ChessBoard::ChessBoard(ChessBoard const& other_chessboard): turn(other_chessboard.turn), game_over(other_chessboard.game_over)
 {   
-    this->create_all_pieces();
     *this = other_chessboard; // Delegate to assignment operator
 }
 
 ChessBoard& ChessBoard::operator=(ChessBoard const& other_chessboard)
 {
-    if (this == &other_chessboard)
+    if (this == &other_chessboard) // Self assignment guard
     {
         return *this;
     }
@@ -113,14 +84,14 @@ void ChessBoard::create_all_pieces()
     // Initiate first two rows for white and black
     for (int colour = black; colour <= white; colour += white-black)
     {
-        chessboard[colour == white ? 7 : 0][0] = new Rook(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][1] = new Knight(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][2] = new Bishop(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][3] = new Queen(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][4] = new King(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][5] = new Bishop(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][6] = new Knight(colour == black ? black : white);
-        chessboard[colour == white ? 7 : 0][7] = new Rook(colour == black ? black : white);
+        chessboard[colour == white ? 7 : 0][a_file] = new Rook(colour == black ? black : white);
+        chessboard[colour == white ? 7 : 0][b_file] = new Knight(colour == black ? black : white);
+        chessboard[colour == white ? 7 : 0][c_file] = new Bishop(colour == black ? black : white);
+        chessboard[colour == white ? 7 : 0][d_file] = new Queen(colour == black ? black : white);
+        chessboard[colour == white ? 7 : 0][e_file] = new King(colour == black ? black : white);
+        chessboard[colour == white ? 7 : 0][f_file] = new Bishop(colour == black ? black : white);
+        chessboard[colour == white ? 7 : 0][g_file] = new Knight(colour == black ? black : white);
+        chessboard[colour == white ? 7 : 0][h_file] = new Rook(colour == black ? black : white);
         // Initiate pawns
         
         for (int column = 'A'; column <= 'H'; column++)
@@ -169,7 +140,8 @@ bool ChessBoard::p1_checks(const char* initial_pos, const char* final_pos) const
 {
     bool check = (check_move_format(initial_pos, final_pos) &&
                   check_move_targets_piece(initial_pos) &&
-                  check_is_turn(initial_pos));
+                  check_is_turn(initial_pos) &&
+                  check_game_over());
     return check;
 } 
 
@@ -221,7 +193,7 @@ bool ChessBoard::check_is_turn(const char* initial_pos) const
 bool ChessBoard::check_game_over() const
 {
     if (this->game_over) {
-        std::cout<< " Game is over, reset board to play again" << std::endl;
+        std::cout<< "Game is over, reset board to play again." << std::endl;
         return false;
     }
     return true;
@@ -396,7 +368,7 @@ bool ChessBoard::check_pawn_specific_moves(const char* initial_pos,
 }
 
 // ========= Check/Check-Mate functions =======
-bool ChessBoard::in_check(int turn) // In check will check if given colour is in check
+bool ChessBoard::in_check(int turn) const // In check will check if given colour is in check
 {
 
     // Get position of king
@@ -507,6 +479,91 @@ bool ChessBoard::has_legal_moves(char* piece_position) const // Check if piece a
     return false; // If no possible moves are available to an individual piece
 }
 
+
+// ============ Castling Functionality ====================
+// Castling checks are not contained within the priority 2 checks since castling can not be used 
+// in any has_legal_move checks (it is not a way to avoid check)
+
+bool ChessBoard::check_castle(const char* initial_pos, const char* final_pos) const
+{
+    int row_0 = '8' - initial_pos[1]; 
+    int column_0 = initial_pos[0] - 'A';
+    int row_1 = '8' - final_pos[1];
+    int column_1 = final_pos[0] - 'A';
+
+    ChessPiece* chess_piece= chessboard[row_0][column_0];
+    int colour = chess_piece->get_colour();
+
+    if (((column_0 == e_file) && (row_0 == (colour == white ? 7 : 0))) && // King is in correct position
+        (chess_piece->get_piece_type() == king) && // If piece is a king
+         chess_piece->get_castle_flag() && // It can actually castle
+         !chessboard[row_1][column_1]) // No piece exists at given position (not even enemy piece)
+    {   
+        // Case 1: short range castle
+        if ((column_1 == g_file) && (row_1 == row_0))
+        {   
+            // If there is a rook in the h_file with which the king can castle
+            if ((chessboard[colour == white ? 7 : 0][h_file]) &&
+                (chessboard[colour == white ? 7 : 0][h_file]->get_piece_type() == rook) && // There is a rook
+                (chessboard[colour == white ? 7 : 0][h_file]->get_colour() == colour) && // With same colour
+                (chessboard[colour == white ? 7 : 0][h_file]->get_castle_flag()))
+                 {
+                    // If the king does not pass through check in order to castle
+                    char test_pos[2];
+                    test_pos[0] = initial_pos[0]+1;
+                    test_pos[1] = initial_pos[1];  
+                    if (check_move_not_into_check(initial_pos, test_pos))
+                    {
+                        return true;
+                    }
+                 }
+        }
+        // Case 2: long range castle
+        else if ((column_1 == c_file) && (row_1 == row_0))
+        {
+            // If there is a rook in the a_file with which the king can castle
+            if ((chessboard[colour == white ? 7 : 0][a_file]) && // Piece exists
+                (chessboard[colour == white ? 7 : 0][a_file]->get_piece_type() == rook) && // is a rook
+                (chessboard[colour == white ? 7 : 0][a_file]->get_colour() == colour) &&
+                (chessboard[colour == white ? 7 : 0][a_file]->get_castle_flag())) // Has not yet moved
+                 {
+                    // If the king does not pass through check in order to castle
+                    char test_pos[2];
+                    test_pos[0] = initial_pos[0]-1;
+                    test_pos[1] = initial_pos[1];  
+                    if (check_move_not_into_check(initial_pos, test_pos))
+                    {
+                        return true;
+                    }
+                 }
+        }
+    }
+    return false;
+}
+
+void ChessBoard::perform_castle(const char* initial_pos, const char* final_pos)
+{
+    int row_0 = '8' - initial_pos[1]; 
+    int row_1 = '8' - final_pos[1];
+    int column_1 = final_pos[0] - 'A';
+    
+    // Case 1: short range castle
+    if ((column_1 == g_file) && (row_1 == row_0))
+    {
+        ChessPiece* rook_piece = chessboard[row_0][h_file];
+        chessboard[row_0][f_file] = rook_piece; // Move rook piece over king
+        chessboard[row_0][h_file] = nullptr; 
+        rook_piece->set_castle_flag();
+    }
+    // Case 2: Long range castle
+    else if ((column_1 == c_file) && (row_1 == row_0))
+    {
+        ChessPiece* rook_piece = chessboard[row_0][a_file];
+        chessboard[row_0][d_file] = rook_piece; // Move rook piece over king
+        chessboard[row_0][a_file] = nullptr; 
+        rook_piece->set_castle_flag();
+    }    
+}
 // ========= Flag setter =========
 
 void ChessBoard::set_flags(const char* initial_pos,  const char* final_pos)
@@ -515,6 +572,8 @@ void ChessBoard::set_flags(const char* initial_pos,  const char* final_pos)
     int column_0 = initial_pos[0] - 'A';
     int row_1 = '8' - final_pos[1];
     int column_1 = final_pos[0] - 'A';
+
+    // En Passsant Flag
 
     ChessPiece* chess_piece = chessboard[row_1][column_1];
     if (chess_piece->get_piece_type() == pawn) // If a pawn has been moved
@@ -533,6 +592,21 @@ void ChessBoard::set_flags(const char* initial_pos,  const char* final_pos)
         else{ // If pawn had already moved prior to check
         chess_piece->set_en_passant_flag(false); // It can no longer be captured via EP
         }
+    }
+
+    // King in check flag
+
+    char king_pos[2];
+    find_king(this->turn, king_pos); // Find this turn's king position
+    int col_king = king_pos[0] - 'A';
+    int row_king = '8'- king_pos[1];
+    chessboard[row_king][col_king]->set_check_flag(in_check(this->turn));
+
+    // Rook and king castle flag
+
+    if(chess_piece->get_piece_type() == king || chess_piece->get_piece_type() == rook) // If either of the rook or king have moved 
+    {
+        chess_piece->set_castle_flag(); // Turn off ability to castle
     }
 }
 
@@ -558,6 +632,7 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
                 std::string captured_piece_name;
                 int captured_colour; 
 
+                // ===== Capturing Moves ======
                 if (en_passant_attack) // Case 1: En Passant
                 {
                     capture_flag = true;
@@ -566,13 +641,18 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
                     delete chessboard[row_1+chess_piece->get_colour()][column_1];
                     chessboard[row_1+chess_piece->get_colour()][column_1] = nullptr;
                 }
-
-                else if (attacked_position) // Case 2: Direct Capture
+                else if (attacked_position) // Case 2: Direct Capture of another piece (can not do en passant as well)
                 {
                     capture_flag = true;
                     captured_piece_name = piece_lookup(chessboard[row_1][column_1]->get_piece_type());
                     captured_colour = chessboard[row_1][column_1]->get_colour();
                     delete chessboard[row_1][column_1];
+                }
+                // ====== Non capturing moves =======
+
+                else if (check_castle(initial_pos, final_pos))
+                {
+                    perform_castle(initial_pos, final_pos);
                 }
 
                 chessboard[row_1][column_1] = chessboard[row_0][column_0]; // Point to previous piece
@@ -592,8 +672,9 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
 
                 chessboard[row_0][column_0] = nullptr; // Set initial piece to null
                 print_board(); // Print turn if successful 
-                set_flags(initial_pos, final_pos);
+
                 this->turn = (this->turn == white ? black : white); // Change over turns
+                set_flags(initial_pos, final_pos); // Set respective piece flags
 
                 // ===== Check, stalemeate and Chekmate
                 if (in_check(this->turn)) // Check the other colour is in check after your move
@@ -674,6 +755,3 @@ void ChessBoard::print_board()
         std::cout << "-" << std::endl;
     }
 }
-
-
-

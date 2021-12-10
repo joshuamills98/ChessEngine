@@ -4,6 +4,8 @@
 #include "ChessPiece.h"
 
 class King : public ChessPiece {
+    bool can_castle;
+    bool in_check;
 
     public:
         King(int colour);
@@ -12,6 +14,12 @@ class King : public ChessPiece {
         bool check_move(const char* initial_pos,
                         const char* final_pos) override; 
         std::string get_piece_unicode() const override {return (colour == black ? "♚" : "♔");}
+
+        void set_castle_flag() override {this->can_castle=false;}
+        bool get_castle_flag() const override {return !in_check&&can_castle;}
+
+        void set_check_flag(bool in_check) override {this->in_check = in_check;}
+        bool get_check_flag() const override {return false;}
 
 };
 

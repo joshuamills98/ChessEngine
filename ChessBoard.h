@@ -21,7 +21,6 @@ class ChessBoard
         void create_all_pieces();
         void resetBoard();
 
-
         // =========== Priority 1 Checks ============
         bool p1_checks(const char* initial_pos, const char* final_pos) const; // 
         bool check_move_format(const char* initial_pos, const char* final_pos) const; // Check move formatted correctly
@@ -41,17 +40,23 @@ class ChessBoard
                                        bool &en_passant_attack) const;
 
         // ========= Check/Check-Mate functions =======
-        bool in_check(int turn);
+        bool in_check(int turn) const;
         bool in_stalemate();
         
-        // ========= Helper functions =========
+        // ========= Extra Helper functions =========
         void find_king(int turn, char* king_pos) const; 
         bool has_legal_moves(char* piece_position) const;
+        void perform_castle(const char* initial_pos, const char* final_pos);
+        bool check_castle(const char* initial_pos, const char* final_pos) const;
+
         // ========= Flag setter =========
         void set_flags(const char* initial_pos,  const char* final_pos);
 
+        // ========= Submission ==========
         void submitMove(const char* initial_pos,  const char* final_pos);
         void print_board();
+
+        // ========= Operator Overloads ========
         friend void operator<<(std::ostream& os, ChessBoard& chessboard){return chessboard.print_board();}
 };
 

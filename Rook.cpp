@@ -1,6 +1,6 @@
 #include "Rook.h"
 
-Rook::Rook(int colour) : ChessPiece(colour, rook) {}
+Rook::Rook(int colour) : ChessPiece(colour, rook), can_castle(true) {}
 
 Rook::~Rook(){}
 
