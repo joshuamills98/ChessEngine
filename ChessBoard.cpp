@@ -1,6 +1,6 @@
+#include "ChessPiece.h"
 #include "ChessBoard.h"
 
-#include "ChessPiece.h"
 #include "Rook.h"
 #include "King.h"
 #include "Pawn.h"
@@ -13,16 +13,17 @@
 ChessBoard::ChessBoard() : turn(white), game_over(false)
 {
     this->create_all_pieces();
+    std::cout << "A new chess game is started!" << std::endl;
 }
 
 ChessBoard::~ChessBoard()
 {
-    // std::cout << "Deconstructing chessboard" << std::endl;
     delete_all_pieces();
 }
 
 ChessBoard::ChessBoard(ChessBoard const& other_chessboard): turn(other_chessboard.turn), game_over(other_chessboard.game_over)
-{   
+{   ;
+    create_all_pieces();
     *this = other_chessboard; // Delegate to assignment operator
 }
 
@@ -34,6 +35,7 @@ ChessBoard& ChessBoard::operator=(ChessBoard const& other_chessboard)
     }
 
     this->delete_all_pieces(); // Clear current chessboard
+    
     for (int row = '8'; row>= '1'; row--)
     {
         for (int column = 'A'; column<= 'H'; column++)
@@ -92,8 +94,8 @@ void ChessBoard::create_all_pieces()
         chessboard[colour == white ? 7 : 0][f_file] = new Bishop(colour == black ? black : white);
         chessboard[colour == white ? 7 : 0][g_file] = new Knight(colour == black ? black : white);
         chessboard[colour == white ? 7 : 0][h_file] = new Rook(colour == black ? black : white);
-        // Initiate pawns
         
+        // Initiate pawns
         for (int column = 'A'; column <= 'H'; column++)
         {
             chessboard[colour == white ? 6 : 1][column - 'A'] = new Pawn(colour == black ? black : white);
@@ -118,7 +120,6 @@ void ChessBoard::delete_all_pieces()
         {
             if (chessboard['8'-row][column-'A'] != nullptr)
             {
-                // std::cout<< "Deleting piece at " <<(char)column << (char)row << std::endl;
                 delete chessboard['8'-row][column-'A'];
                 chessboard['8'-row][column-'A'] = nullptr;
             }
@@ -132,6 +133,7 @@ void ChessBoard::resetBoard()
     game_over = false;
     delete_all_pieces();
     create_all_pieces();
+    std::cout << "A new chess game is started!" << std::endl;
 }
 
 // =========== Priority 1 Checks ============
@@ -292,8 +294,8 @@ bool ChessBoard::check_not_capturing_king(const char* final_pos) const
 bool ChessBoard::check_move_not_into_check(const char* initial_pos, const char* final_pos) const
 {
     // Create a completely new board with similar set up
-    ChessBoard new_board;
-    new_board = *this;
+    
+    ChessBoard new_board = *this;
 
     int row_0 = '8' - initial_pos[1]; 
     int column_0 = initial_pos[0] - 'A';
@@ -483,6 +485,26 @@ bool ChessBoard::has_legal_moves(char* piece_position) const // Check if piece a
 // ============ Castling Functionality ====================
 // Castling checks are not contained within the priority 2 checks since castling can not be used 
 // in any has_legal_move checks (it is not a way to avoid check)
+bool ChessBoard::is_attempting_castle(const char* initial_pos, const char* final_pos) const
+{
+    int row_0 = '8' - initial_pos[1]; 
+    int column_0 = initial_pos[0] - 'A';
+    int row_1 = '8' - final_pos[1];
+    int column_1 = final_pos[0] - 'A';
+
+    ChessPiece* chess_piece= chessboard[row_0][column_0];
+    int piece_colour = chess_piece->get_colour();
+
+    if ((chess_piece->get_piece_type() == king) && // Piece must be a king
+        (row_0 == (piece_colour == white ? 7 : 0)) && // In given row
+        (row_0 == row_1) && // Moving along row
+        (column_0 == e_file) && // From the e file
+        ((column_1 == c_file) || (column_1 == g_file))) // Between given columns
+        {
+            return true;
+        }
+    return false;
+}
 
 bool ChessBoard::check_castle(const char* initial_pos, const char* final_pos) const
 {
@@ -491,13 +513,11 @@ bool ChessBoard::check_castle(const char* initial_pos, const char* final_pos) co
     int row_1 = '8' - final_pos[1];
     int column_1 = final_pos[0] - 'A';
 
-    ChessPiece* chess_piece= chessboard[row_0][column_0];
-    int colour = chess_piece->get_colour();
+    ChessPiece* king_piece = chessboard[row_0][column_0];
+    int colour = king_piece->get_colour();
 
-    if (((column_0 == e_file) && (row_0 == (colour == white ? 7 : 0))) && // King is in correct position
-        (chess_piece->get_piece_type() == king) && // If piece is a king
-         chess_piece->get_castle_flag() && // It can actually castle
-         !chessboard[row_1][column_1]) // No piece exists at given position (not even enemy piece)
+    if (king_piece->get_castle_flag() && // If king can actually castle
+        !chessboard[row_1][column_1]) // No piece exists at given position (not even enemy piece)
     {   
         // Case 1: short range castle
         if ((column_1 == g_file) && (row_1 == row_0))
@@ -543,10 +563,13 @@ bool ChessBoard::check_castle(const char* initial_pos, const char* final_pos) co
 
 void ChessBoard::perform_castle(const char* initial_pos, const char* final_pos)
 {
-    int row_0 = '8' - initial_pos[1]; 
+    int row_0 = '8' - initial_pos[1];
+    int column_0 = initial_pos[0] - 'A';
     int row_1 = '8' - final_pos[1];
     int column_1 = final_pos[0] - 'A';
-    
+    int piece_colour = chessboard[row_0][column_0]->get_colour();
+    CastleType castle_type;
+
     // Case 1: short range castle
     if ((column_1 == g_file) && (row_1 == row_0))
     {
@@ -554,6 +577,7 @@ void ChessBoard::perform_castle(const char* initial_pos, const char* final_pos)
         chessboard[row_0][f_file] = rook_piece; // Move rook piece over king
         chessboard[row_0][h_file] = nullptr; 
         rook_piece->set_castle_flag();
+        castle_type = short_castle;
     }
     // Case 2: Long range castle
     else if ((column_1 == c_file) && (row_1 == row_0))
@@ -562,7 +586,13 @@ void ChessBoard::perform_castle(const char* initial_pos, const char* final_pos)
         chessboard[row_0][d_file] = rook_piece; // Move rook piece over king
         chessboard[row_0][a_file] = nullptr; 
         rook_piece->set_castle_flag();
-    }    
+        castle_type = long_castle;
+    }
+
+    std::cout << (piece_colour == white ? "White " : "Black ")
+              << "performs a "
+              << (castle_type == short_castle ? "short-" : "long-")
+              << "range castle" << std::endl;    
 }
 // ========= Flag setter =========
 
@@ -629,6 +659,23 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
 
         if (p2_checks(initial_pos, final_pos, en_passant_attack)) // Perform priority level 2 checks
             {
+
+            if (is_attempting_castle(initial_pos, final_pos)) // Case 1: If attempting a castle
+            {
+                if (check_castle(initial_pos, final_pos))
+                {
+                    perform_castle(initial_pos, final_pos);
+                    chessboard[row_1][column_1] = chessboard[row_0][column_0]; // Point to previous piece
+                    chessboard[row_0][column_0] = nullptr; // Set initial piece to null
+                    handle_end_of_move(initial_pos, final_pos);
+                }
+                else{
+                    std::cout<< "Invalid castle" << std::endl;
+                    return;
+                }
+            }  
+            else // Case 2: Not performing a castle
+            {    
                 std::string captured_piece_name;
                 int captured_colour; 
 
@@ -648,13 +695,6 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
                     captured_colour = chessboard[row_1][column_1]->get_colour();
                     delete chessboard[row_1][column_1];
                 }
-                // ====== Non capturing moves =======
-
-                else if (check_castle(initial_pos, final_pos))
-                {
-                    perform_castle(initial_pos, final_pos);
-                }
-
                 chessboard[row_1][column_1] = chessboard[row_0][column_0]; // Point to previous piece
 
                 // Print out statements
@@ -665,48 +705,62 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
                 if (capture_flag) // Print capture statement
                 {
                     std::cout << " taking " 
-                                << (captured_colour == black ? "Black's " : "White's ")
-                                << captured_piece_name;
+                              << (captured_colour == black ? "Black's " : "White's ")
+                              << captured_piece_name;
                 }
                 std::cout << std::endl;
 
                 chessboard[row_0][column_0] = nullptr; // Set initial piece to null
-                print_board(); // Print turn if successful 
-
-                this->turn = (this->turn == white ? black : white); // Change over turns
-                set_flags(initial_pos, final_pos); // Set respective piece flags
-
-                // ===== Check, stalemeate and Chekmate
-                if (in_check(this->turn)) // Check the other colour is in check after your move
-                {
-                    if (in_stalemate()) // A stalemate while cheked == a checkmate
-                    {
-                        std::cout << (this->turn == white ? "White " : "Black ") << "is in checkmate, " << (this->turn == black ? "White " : "Black ") << "wins!" << std::endl;
-                        this->game_over = true;
-                        return;
-                    }
-                    else
-                    {
-                        std::cout << (this->turn == white ? "White " : "Black ") << "is in check" << std::endl;
-                    }
-                }
-                 else if (in_stalemate()) // Else check for a stalemate on its own
-                {
-                    std::cout << "Game ends in a draw due to a stalemate on " << (this->turn == white ? "White's" : "Black's") << " King" << std::endl;
-                    this->game_over = true;
-                    return;
-                }
-
-
-                return;
+                handle_end_of_move(initial_pos, final_pos);
             }
+            }
+            else
+            {
             // Print out priority level 2/ individual chess piece error messages
             std::cout << (turn == black ? "Black's " : "White's ")
-                    << piece_lookup(chess_piece->get_piece_type())
-                    << " cannot move to "
-                    << final_pos << "!" << std::endl;
+                      << piece_lookup(chess_piece->get_piece_type())
+                      << " cannot move to "
+                      << final_pos << "!" << std::endl;
+            }
     }
 
+}
+
+void ChessBoard::handle_end_of_move(const char* initial_pos,  const char* final_pos)
+{
+    // print_board(); // Print turn if successful 
+
+    this->turn = (this->turn == white ? black : white); // Change over turns
+    set_flags(initial_pos, final_pos); // Set respective piece flags
+
+    // ===== Check, stalemeate and Chekmate
+    if (in_check(this->turn)) // Check the other colour is in check after your move
+    {
+        if (in_stalemate()) // A stalemate while cheked == a checkmate
+        {
+            std::cout << (this->turn == white ? "White " : "Black ") 
+                      << "is in checkmate"
+                    //   << ", " 
+                    //   << (this->turn == black ? "White " : "Black ") 
+                    //   << "wins!" 
+                      << std::endl;
+            this->game_over = true;
+            return;
+        }
+        else
+        {
+            std::cout << (this->turn == white ? "White " : "Black ") 
+                      << "is in check" << std::endl;
+        }
+    }
+    else if (in_stalemate()) // Else check for a stalemate on its own
+    {
+    std::cout << "Game ends in a draw due to a stalemate on " 
+            << (this->turn == white ? "White's" : "Black's")
+            << " King" << std::endl;
+    this->game_over = true;
+    return;
+    }
 }
 
 void ChessBoard::print_board()

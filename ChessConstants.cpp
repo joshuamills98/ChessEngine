@@ -1,6 +1,6 @@
 #include "ChessConstants.h"
 
-std::string piece_lookup(int piece_type)
+std::string piece_lookup(PieceType piece_type)
 {
     switch(piece_type) {
         case pawn :
@@ -16,11 +16,5 @@ std::string piece_lookup(int piece_type)
         case king :
             return "King";
     }
-    throw std::runtime_error("No given piece type");
-}
-
-void convert_position_to_int(const char* position, int converted_output[])
-{
-    converted_output[0] = *position - 'A' + 1;
-    converted_output[1] = *(position+1) - '1' + 1;
+    throw std::runtime_error("Incorrect given piece type");
 }

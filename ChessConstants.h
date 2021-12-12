@@ -8,13 +8,13 @@
 #include <stdio.h>
 #include <iostream>
 
-
-void convert_position_to_int(const char* position, int converted_output[]);
-
 enum PieceType {pawn, bishop, knight, rook, queen, king};
 
 enum File {a_file, b_file, c_file, d_file, e_file, f_file, g_file, h_file};
 
-std::string piece_lookup(int piece_type);
+enum CastleType {short_castle, long_castle};
+
+// Function to get the string name of a piece given the type of piece
+std::string piece_lookup(PieceType piece_type); 
 
 #endif

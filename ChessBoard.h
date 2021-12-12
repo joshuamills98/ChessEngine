@@ -22,18 +22,36 @@ class ChessBoard
         void resetBoard();
 
         // =========== Priority 1 Checks ============
+        // High level priority check 'p1' must be passed for any move to be considered 
         bool p1_checks(const char* initial_pos, const char* final_pos) const; // 
-        bool check_move_format(const char* initial_pos, const char* final_pos) const; // Check move formatted correctly
-        bool check_is_turn(const char* initial_pos) const; // Check it is the turn of submission
-        bool check_move_targets_piece(const char* initial_pos) const; // Check there is actually a piece at given position
+        
+        // Check move entry is formatted correctly
+        bool check_move_format(const char* initial_pos, const char* final_pos) const; 
+        
+        // Check it is the turn of submission
+        bool check_is_turn(const char* initial_pos) const; 
+
+        // Check the move actually targets an individual piece
+        bool check_move_targets_piece(const char* initial_pos) const; 
+
+        // Check the game is not already over
         bool check_game_over() const;
 
         // =========== Priority 2 Checks ============
-        bool p2_checks(const char* initial_pos, const char* final_pos, bool& en_passant_attack) const; // 
+        // Priority 2 level checks are game specific but equally must be passed 
+        bool p2_checks(const char* initial_pos, const char* final_pos, bool& en_passant_attack) const;
+
+        // Check piece is not being moved its own position
         bool check_move_not_null(const char* initial_pos,  const char* final_pos) const;
+
+        // Check the move doesn't force a piece cross over another piece (provided it is not a knight)
         bool check_move_not_crossing(const char* initial_pos,  const char* final_pos) const;
+
         bool check_not_attacking_own_team(const char* initial_pos,  const char* final_pos) const;
+
         bool check_not_capturing_king(const char* final_pos) const;
+
+        // Check the move doesn't send your own king into check 
         bool check_move_not_into_check(const char* initial_pos,  const char* final_pos) const;
         bool check_pawn_specific_moves(const char* initial_pos,
                                        const char* final_pos, 
@@ -46,14 +64,18 @@ class ChessBoard
         // ========= Extra Helper functions =========
         void find_king(int turn, char* king_pos) const; 
         bool has_legal_moves(char* piece_position) const;
-        void perform_castle(const char* initial_pos, const char* final_pos);
+
+        // ========= Castling Functionality ==========
+        bool is_attempting_castle(const char* initial_pos, const char* final_pos) const;
         bool check_castle(const char* initial_pos, const char* final_pos) const;
+        void perform_castle(const char* initial_pos, const char* final_pos);
 
         // ========= Flag setter =========
         void set_flags(const char* initial_pos,  const char* final_pos);
 
         // ========= Submission ==========
         void submitMove(const char* initial_pos,  const char* final_pos);
+        void handle_end_of_move(const char* initial_pos,  const char* final_pos);
         void print_board();
 
         // ========= Operator Overloads ========
