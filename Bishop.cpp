@@ -16,8 +16,6 @@ bool Bishop::check_move(const char* initial_pos,
         {
             return true;
         }
-    // piece_move_error_message(initial_pos,
-    //                          final_pos);
     return false;
 }
 

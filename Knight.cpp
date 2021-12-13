@@ -12,6 +12,7 @@ bool Knight::check_move(const char* initial_pos,
     int row_1 = '8' - final_pos[1];
     int column_1 = final_pos[0] - 'A';
 
+    // There are 8 possible moves a knight can make given by the vectors (+/-2, +/-1) or (+/-1, +/-2)
     if ((row_1 == row_0+2 && column_1 == column_0+1) ||
         (row_1 == row_0-2 && column_1 == column_0+1) ||
         (row_1 == row_0+2 && column_1 == column_0-1) ||
@@ -23,7 +24,5 @@ bool Knight::check_move(const char* initial_pos,
     {
         return true;
     }
-    // piece_move_error_message(initial_pos,
-    //                          final_pos);
     return false;
 } 
