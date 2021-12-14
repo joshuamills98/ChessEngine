@@ -92,7 +92,7 @@ class ChessBoard
         // Determine if the colour/turn is in check 
         bool in_check(int turn) const; 
 
-        bool in_stalemate();
+        bool in_stalemate() const;
         
         // ================== EXTRA HELPER FUNCTIONS ==================
 

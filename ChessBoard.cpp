@@ -380,7 +380,7 @@ bool ChessBoard::check_pawn_specific_moves(const char* initial_pos,
     return true; // If piece isn't a pawn then this function doesn't apply
 }
 
-// ========= Check/Check-Mate functions =======
+// =========================== Check/Check-Mate functions =============================================
 
 bool ChessBoard::in_check(int turn) const // In check will check if given colour is in check
 {
@@ -429,7 +429,7 @@ bool ChessBoard::in_check(int turn) const // In check will check if given colour
     return false; // If no attackers satisfy previous condition
 }
 
-bool ChessBoard::in_stalemate() // stalemate checked at the end of a player's turn
+bool ChessBoard::in_stalemate() const // stalemate checked at the end of a player's turn
 { 
     
     // Check all other pieces of 
@@ -497,7 +497,7 @@ bool ChessBoard::has_legal_moves(char* piece_position) const // Check if piece a
 }
 
 
-// ================== CASTLING FUNCTIONALITY ==================
+// =========================== CASTLING FUNCTIONALITY ====================================
 // Castling checks are not contained within the priority 2 checks since castling can not be used 
 // in any has_legal_move checks (it is not a way to avoid check)
 
@@ -659,7 +659,7 @@ void ChessBoard::set_flags(const char* initial_pos,  const char* final_pos)
 }
 
 
-// ================= END OF MOVE FUNCTIONS =================
+// ==================================== END OF MOVE FUNCTIONS =============================================
 
 void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
 {
@@ -752,7 +752,7 @@ void ChessBoard::handle_end_of_move(const char* initial_pos,  const char* final_
     this->turn = (this->turn == white ? black : white); // Change over turns
     set_flags(initial_pos, final_pos); // Set respective piece flags
 
-    // ===== Check, stalemeate and Chekmate
+    // ====== Check, stalemeate and Chekmate ======
     if (in_check(this->turn)) // Check the other colour is in check after your move
     {
         if (in_stalemate()) // Case 1: A stalemate (a stalemate while cheked == a checkmate)

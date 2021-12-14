@@ -1,26 +1,41 @@
-SRCDIR   = ./
-OBJDIR   = ./
-EXEDIR   = ./
-TARGET   = chess
-CXX      = g++
+CC=g++ -g -Wall
 
-SRC      = $(wildcard $(addsuffix *.cpp,$(SRCDIR)))
 
-OBJ      = $(addprefix $(OBJDIR), $(patsubst %.cpp, %.o, $(notdir $(SRC))))
+chess: ChessMain.o ChessBoard.o ChessPiece.o King.o Pawn.o Queen.o Rook.o Bishop.o Knight.o ChessConstants.o
+	$(CC) ChessMain.o ChessBoard.o ChessPiece.o King.o Pawn.o Queen.o Rook.o Bishop.o Knight.o ChessConstants.o -o chess
 
-VPATH    = $(SRCDIR)
+ChessMain.o: ChessMain.cpp
+	$(CC) -c ChessMain.cpp 
 
-CXXFLAGS = -Wall -g -std=c++2a
+ChessBoard.o: ChessBoard.cpp 
+	$(CC) -c ChessBoard.cpp 
 
-$(TARGET) : $(OBJ)
-	@echo Linking...
-	@$(CXX) $(CXXFLAGS) -o $(EXEDIR)$@ $(OBJ)
+ChessPiece.o: ChessPiece.cpp 
+	$(CC) -c ChessPiece.cpp 
 
-$(OBJDIR)%.o : %.cpp
-	@echo Compiling $< in $@...
-	@$(CXX) $(CXXFLAGS) -c -o $@ $<
+King.o: King.cpp 
+	$(CC) -c King.cpp 
 
-.PHONY: clean
+Queen.o: Queen.cpp 
+	$(CC) -c Queen.cpp 
 
-clean :
-	rm *.o
+Pawn.o: Pawn.cpp 
+	$(CC) -c Pawn.cpp 
+
+Rook.o: Rook.cpp 
+	$(CC) -c Rook.cpp 
+
+Knight.o: Knight.cpp 
+	$(CC) -c Knight.cpp 
+	
+Bishop.o: Bishop.cpp 
+	$(CC) -c Bishop.cpp 
+
+ChessConstants.o: ChessConstants.cpp 
+	$(CC) -c ChessConstants.cpp 
+
+tidy:
+	rm -f *.o core
+
+clean:
+	rm -f main producer consumer *.o core
