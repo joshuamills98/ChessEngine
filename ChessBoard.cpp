@@ -369,7 +369,7 @@ bool ChessBoard::check_pawn_specific_moves(const char* initial_pos,
             ChessPiece* attacked_piece = chessboard[attacked_piece_row][attacked_piece_column];
 
             if ((attacked_piece->get_piece_type() == pawn) &&  // If piece being attacked is a pawn
-                (attacked_piece->get_en_passant_flag()) && // If it is in a position where en passant is applicable
+                (dynamic_cast<Pawn*>(attacked_piece)->get_en_passant_flag()) && // If it is in a position where en passant is applicable
                 !chessboard[row_1][column_1]) // If no piece is in the way
             {
                 en_passant_attack = true; // Set en passant flag to be used in the submitMove function
@@ -532,7 +532,7 @@ bool ChessBoard::check_castle(const char* initial_pos, const char* final_pos) co
     ChessPiece* king_piece = chessboard[row_0][column_0];
     int colour = king_piece->get_colour();
 
-    if (king_piece->get_castle_flag() && // If king can actually castle
+    if (dynamic_cast<King*>(king_piece)->get_castle_flag() && // If king can actually castle
         !chessboard[row_1][column_1]) // No piece exists at given position (not even enemy piece)
     {   
         // Case 1: short range castle
@@ -542,7 +542,7 @@ bool ChessBoard::check_castle(const char* initial_pos, const char* final_pos) co
             if ((chessboard[colour == white ? 7 : 0][h_file]) &&
                 (chessboard[colour == white ? 7 : 0][h_file]->get_piece_type() == rook) && // There is a rook
                 (chessboard[colour == white ? 7 : 0][h_file]->get_colour() == colour) && // With same colour
-                (chessboard[colour == white ? 7 : 0][h_file]->get_castle_flag()))
+                (dynamic_cast<Rook*>(chessboard[colour == white ? 7 : 0][h_file])->get_castle_flag()))
                  {
                     // If the king does not pass through check in order to castle
                     char test_pos[2];
@@ -562,7 +562,7 @@ bool ChessBoard::check_castle(const char* initial_pos, const char* final_pos) co
             if ((chessboard[colour == white ? 7 : 0][a_file]) && // Piece exists
                 (chessboard[colour == white ? 7 : 0][a_file]->get_piece_type() == rook) && // is a rook
                 (chessboard[colour == white ? 7 : 0][a_file]->get_colour() == colour) &&
-                (chessboard[colour == white ? 7 : 0][a_file]->get_castle_flag())) // Has not yet moved
+                (dynamic_cast<Rook*>(chessboard[colour == white ? 7 : 0][a_file])->get_castle_flag())) // Has not yet moved
                  {
                     // If the king does not pass through check in order to castle
                     char test_pos[2];
@@ -590,7 +590,7 @@ void ChessBoard::perform_castle(const char* initial_pos, const char* final_pos)
     // Case 1: short range castle
     if ((column_1 == g_file) && (row_1 == row_0))
     {
-        ChessPiece* rook_piece = chessboard[row_0][h_file];
+        Rook* rook_piece = dynamic_cast<Rook*>(chessboard[row_0][h_file]);
         chessboard[row_0][f_file] = rook_piece; // Move rook piece over king
         chessboard[row_0][h_file] = nullptr; 
         rook_piece->set_castle_flag();
@@ -599,7 +599,7 @@ void ChessBoard::perform_castle(const char* initial_pos, const char* final_pos)
     // Case 2: Long range castle
     else if ((column_1 == c_file) && (row_1 == row_0))
     {
-        ChessPiece* rook_piece = chessboard[row_0][a_file];
+        Rook* rook_piece = dynamic_cast<Rook*>(chessboard[row_0][a_file]);
         chessboard[row_0][d_file] = rook_piece; // Move rook piece over king
         chessboard[row_0][a_file] = nullptr; 
         rook_piece->set_castle_flag();
@@ -621,25 +621,39 @@ void ChessBoard::set_flags(const char* initial_pos,  const char* final_pos)
     int row_1 = '8' - final_pos[1];
     int column_1 = final_pos[0] - 'A';
 
-    // En Passsant Flag
+    // There are four flags
+    // one to describe pawn's ability to En Passant
+    // one to describe King's ability to castle
+    // one to describe Rook's ability to castle
+    // one to tell the King if it is in check
+  
 
-    ChessPiece* chess_piece = chessboard[row_1][column_1];
-    if (chess_piece->get_piece_type() == pawn) // If a pawn has been moved
+    if (chessboard[row_1][column_1]->get_piece_type() == pawn) // If a pawn has been moved
     {
-        if (!chess_piece->get_move_flag()) // If this is the Pawn's first move
+    Pawn* pawn_piece = dynamic_cast<Pawn*>(chessboard[row_1][column_1]);
+
+        if (!pawn_piece->get_move_flag()) // If this is the Pawn's first move
         {
-            chess_piece->set_move_flag(); //Set the move flag to true
+            pawn_piece->set_move_flag(); //Set the move flag to true
 
             // If pawn has moved two squares and can be taken 
             // through en passant (can only happen on first move)
             if ((abs(row_1-row_0) ==2) && (column_1==column_0))
             {
-                chess_piece->set_en_passant_flag(true);
+                pawn_piece->set_en_passant_flag(true);
             }
         }
         else{ // If pawn had already moved prior to check
-        chess_piece->set_en_passant_flag(false); // It can no longer be captured via EP
+        pawn_piece->set_en_passant_flag(false); // It can no longer be captured via EP
         }
+    }
+    else if(chessboard[row_1][column_1]->get_piece_type() == king) // 
+    {
+        dynamic_cast<King*>(chessboard[row_1][column_1])->set_castle_flag(); // Turn off ability to castle if either king or rook have moved
+    } 
+    else if(chessboard[row_1][column_1]->get_piece_type() == rook) // If either of the rook or king have moved 
+    {
+        dynamic_cast<Rook*>(chessboard[row_1][column_1])->set_castle_flag(); // Turn off ability to castle if either king or rook have moved
     }
 
     // King in check flag
@@ -648,14 +662,11 @@ void ChessBoard::set_flags(const char* initial_pos,  const char* final_pos)
     find_king(this->turn, king_pos); // Find this turn's king position
     int col_king = king_pos[0] - 'A';
     int row_king = '8'- king_pos[1];
-    chessboard[row_king][col_king]->set_check_flag(in_check(this->turn));
+    dynamic_cast<King*>(chessboard[row_king][col_king])->set_check_flag(in_check(this->turn));
 
     // Rook and king castle flag
 
-    if(chess_piece->get_piece_type() == king || chess_piece->get_piece_type() == rook) // If either of the rook or king have moved 
-    {
-        chess_piece->set_castle_flag(); // Turn off ability to castle if either king or rook have moved
-    }
+
 }
 
 

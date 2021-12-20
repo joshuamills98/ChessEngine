@@ -15,8 +15,8 @@ class Rook : public ChessPiece
                         const char* final_pos) override; 
         std::string get_piece_unicode() const override {return (colour == black ? "♜" : "♖");}
 
-        virtual void set_castle_flag(){this->can_castle=false;}
-        virtual bool get_castle_flag() const {return can_castle;}
+        void set_castle_flag(){this->can_castle=false;}
+        bool get_castle_flag() const {return can_castle;}
 };
 
 #endif
