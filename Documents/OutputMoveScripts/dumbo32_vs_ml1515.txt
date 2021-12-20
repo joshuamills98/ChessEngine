@@ -1,0 +1,87 @@
+cb.submitMove("E2", "E4");
+cout << '\n';
+
+cb.submitMove("E7", "E5");
+cout << '\n';
+
+cb.submitMove("G1", "F3");
+cout << '\n';
+
+cb.submitMove("B8", "C6");
+cout << '\n';
+
+cb.submitMove("F1", "B5");
+cout << '\n';
+
+cb.submitMove("A7", "A6");
+cout << '\n';
+
+cb.submitMove("B5", "A4");
+cout << '\n';
+
+cb.submitMove("G7", "G6");
+cout << '\n';
+
+cb.submitMove("B1", "C3");
+cout << '\n';
+
+cb.submitMove("F8", "G7");
+cout << '\n';
+
+cb.submitMove("D2", "D4");
+cout << '\n';
+
+cb.submitMove("E5", "D4");
+cout << '\n';
+
+cb.submitMove("C3", "D5");
+cout << '\n';
+
+cb.submitMove("G8", "E7");
+cout << '\n';
+
+cb.submitMove("C1", "G5");
+cout << '\n';
+
+cb.submitMove("B7", "B5");
+cout << '\n';
+
+cb.submitMove("A4", "B3");
+cout << '\n';
+
+cb.submitMove("E8", "G8");
+cout << '\n';
+
+cb.submitMove("H2", "H4");
+cout << '\n';
+
+cb.submitMove("G8", "H8");
+cout << '\n';
+
+cb.submitMove("H4", "H5");
+cout << '\n';
+
+cb.submitMove("F7", "F6");
+cout << '\n';
+
+cb.submitMove("H5", "G6");
+cout << '\n';
+
+cb.submitMove("E7", "G6");
+cout << '\n';
+
+cb.submitMove("F3", "E5");
+cout << '\n';
+
+cb.submitMove("C6", "E5");
+cout << '\n';
+
+cb.submitMove("H1", "H7");
+cout << '\n';
+
+cb.submitMove("H8", "H7");
+cout << '\n';
+
+cb.submitMove("D1", "H5");
+cout << '\n';
+

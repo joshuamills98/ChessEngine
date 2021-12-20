@@ -1,0 +1,19 @@
+[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2021.05.27"]
+[White "GothamChess"]
+[Black "Oleg42YNWA"]
+[Result "1-0"]
+[ECO "A01"]
+[WhiteElo "2689"]
+[BlackElo "2622"]
+[TimeControl "180"]
+[EndTime "17:02:36 PDT"]
+[Termination "GothamChess won by checkmate"]
+[SetUp "1"]
+[FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]
+
+1. b3 {[%clk 0:03:00]} d5 {[%clk 0:03:00]} 2. Bb2 {[%clk 0:02:59]} c6 {[%clk 0:02:59]} 3. Nf3 {[%clk 0:02:59]} Bf5 {[%clk 0:02:58]} 4. e3 {[%clk 0:02:58]} Nd7 {[%clk 0:02:57]} 5. Nh4 {[%clk 0:02:57]} Be6 {[%clk 0:02:53]} 6. f4 {[%clk 0:02:56]} Nh6 {[%clk 0:02:51]} 7. Bd3 {[%clk 0:02:53]} Nc5 {[%clk 0:02:49]} 8. O-O {[%clk 0:02:50]} Nxd3 {[%clk 0:02:46]} 9. cxd3 {[%clk 0:02:50]} Nf5 {[%clk 0:02:45]} 10. Nf3 {[%clk 0:02:46]} h5 {[%clk 0:02:44]}
+ 11. e4 {[%clk 0:02:42]} Qb6+ {[%clk 0:02:33]} 12. Kh1 {[%clk 0:02:40]} Nh6 {[%clk 0:02:31]} 13. f5 {[%clk 0:02:39]} Bc8 {[%clk 0:02:26]} 14. Qe2 {[%clk 0:02:37]} Ng4 {[%clk 0:02:22]} 15. h3 {[%clk 0:02:31]} e6 {[%clk 0:02:18]} 16. Nc3 {[%clk 0:02:28]} Be7 {[%clk 0:01:58]} 17. exd5 {[%clk 0:02:23]} cxd5 {[%clk 0:01:55]} 18. Nxd5 {[%clk 0:02:22]} exd5 {[%clk 0:01:53]} 19. Rae1 {[%clk 0:02:20]} O-O {[%clk 0:01:42]} 20. Qxe7 {[%clk 0:02:19]} Nf2+ {[%clk 0:01:41]}
+ 21. Rxf2 {[%clk 0:02:17]} Qxf2 {[%clk 0:01:40]} 22. Bd4 {[%clk 0:02:16]} Qg3 {[%clk 0:01:39]} 23. Be5 {[%clk 0:01:31]} Qf2 {[%clk 0:01:37]} 24. Qxf8+ {[%clk 0:01:20]} Kxf8 {[%clk 0:01:34]} 25. Bd6+ {[%clk 0:01:20]} Kg8 {[%clk 0:01:30]} 26. Re8+ {[%clk 0:01:20]} Kh7 {[%clk 0:01:29]} 27. Ng5+ {[%clk 0:01:19]} Kh6 {[%clk 0:01:28]} 28. Nxf7+ {[%clk 0:01:19]} Kh7 {[%clk 0:01:28]} 29. Rh8# {[%clk 0:01:19]} 1-0
+
