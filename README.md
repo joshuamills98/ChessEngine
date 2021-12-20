@@ -12,5 +12,7 @@ To run the chess program
 
 The program should run the chess game provided by `ChessMain.cpp` in the terminal. An example output is shown below:
 
-![](./images/2021-12-20-12-31-13.png2021-12-20-12-31-13.png)
+## <center> **Exanmple Output** </center>
+![Example](./images/Example.png)
+
 # <center> **File Description**
