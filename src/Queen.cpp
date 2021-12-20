@@ -1,4 +1,4 @@
-#include "Queen.h"
+#include "../inc/Queen.h"
 
 Queen::Queen(int colour) : ChessPiece(colour, queen) {}
 

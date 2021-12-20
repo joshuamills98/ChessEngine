@@ -1,6 +1,6 @@
-SRCDIR   = ./ 
-OBJDIR   = ./
-EXEDIR   = ./
+SRCDIR   = ./src/
+OBJDIR   = ./obj/
+EXEDIR   = ./bin/
 TARGET   = chess
 CXX      = g++
 
@@ -23,4 +23,4 @@ $(OBJDIR)%.o : %.cpp
 .PHONY: clean
 
 clean :
-	rm *.o
+	rm -f $(OBJDIR)*.o $(EXEDIR)$(TARGET)

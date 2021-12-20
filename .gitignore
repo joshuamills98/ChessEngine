@@ -1,0 +1,13 @@
+obj/Bishop.o
+obj/ChessBoard.o
+obj/ChessConstants.o
+obj/ChessMain.o
+obj/ChessPiece.o
+obj/King.o
+obj/Knight.o
+obj/Pawn.o
+obj/Queen.o
+obj/Rook.o
+/Extra_Info
+/bin/chess
+/.vscode

@@ -1,4 +1,4 @@
-#include "Knight.h"
+#include "../inc/Knight.h"
 
 Knight::Knight(int colour) : ChessPiece(colour, knight) {}
 

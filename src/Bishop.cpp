@@ -1,4 +1,4 @@
-#include "Bishop.h"
+#include "../inc/Bishop.h"
 
 Bishop::Bishop(int colour) : ChessPiece(colour, bishop) {}
 

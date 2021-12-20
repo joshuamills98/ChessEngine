@@ -11,12 +11,6 @@ class ChessPiece {
     //  the polarity of this data member is used to reduce code throughout the functionality
     // PieceType piece_type - integer describing type of piece
 
-    // FUNCTIONALITY
-    // GENERAL FUNCTIONS FOR ALL CHESS PIECES: will be defined by used by all pieces
-    // PAWN-SPECIFIC FUNCTIONS: function to manage en passant and double jump for first move
-    // ROOK AND KING SPECIFIC FUNCTION: Castling functionality
-    // KING SPECIFIC FUNCTIONS: In check functionality
-
     protected:
         int colour; // -1 = black, 1= white
         PieceType piece_type;

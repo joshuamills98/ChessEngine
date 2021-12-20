@@ -1,4 +1,4 @@
-#include "ChessConstants.h"
+#include "../inc/ChessConstants.h"
 
 std::string piece_lookup(PieceType piece_type)
 {

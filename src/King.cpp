@@ -1,4 +1,4 @@
-#include "King.h"
+#include "../inc/King.h"
 
 King::King(int colour) : ChessPiece(colour, king), can_castle(true), in_check(false) {}
 

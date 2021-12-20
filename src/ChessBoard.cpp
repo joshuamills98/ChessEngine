@@ -1,4 +1,4 @@
-#include "ChessBoard.h"
+#include "../inc/ChessBoard.h"
 
 // =========== Class Constructors/Destructors and Assignment Operator Overload ==========
 
@@ -758,7 +758,7 @@ void ChessBoard::submitMove(const char* initial_pos,  const char* final_pos)
 
 void ChessBoard::handle_end_of_move(const char* initial_pos,  const char* final_pos)
 {
-    // print_board(); // Print turn if successful 
+    print_board(); // Print turn if successful 
 
     this->turn = (this->turn == white ? black : white); // Change over turns
     set_flags(initial_pos, final_pos); // Set respective piece flags

@@ -1,4 +1,4 @@
-#include "Pawn.h"
+#include "../inc/Pawn.h"
 
 Pawn::Pawn(int colour) : ChessPiece(colour, pawn) , has_moved(false), en_passant(false) {}
 

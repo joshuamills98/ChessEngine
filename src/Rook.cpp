@@ -1,4 +1,4 @@
-#include "Rook.h"
+#include "../inc/Rook.h"
 
 Rook::Rook(int colour) : ChessPiece(colour, rook), can_castle(true) {}
 
