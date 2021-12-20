@@ -4,22 +4,13 @@
 #Import libraries
 
 import re
-import pandas as pd
 import os
-import requests
-import json
-import urllib.request
 from pathlib import Path
-import subprocess
-
 
 #Declare Globals
-tgtFilePath="./Documents/mygames.csv" #This is the path where the final CSV gets created
-moveStartLine = 22 #Moves in chess.com PGNs typically start from the 22nd line for each game
 InputPGNDirectory="./Documents/InputPGNs/" #This is the location where the API downloads the PGNs from the archives
 OutputPGNDirectory="./Documents/OutputPGNs/"
 OutputScriptDirectory = "./Documents/OutputMoveScripts/"
-user='datasherlock' #The user for whom the script is intended to run
 
 def importPGNData(filepath):
     """This function returns the data read as a string"""
