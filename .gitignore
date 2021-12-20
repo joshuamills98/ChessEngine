@@ -11,3 +11,5 @@ obj/Rook.o
 /Extra_Info
 /bin/chess
 /.vscode
+/fonts
+.gitignore
