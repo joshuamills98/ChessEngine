@@ -816,15 +816,7 @@ void ChessBoard::print_board()
         {
             auto piece = chessboard['8'-row][column-'A'];
 
-            // Unicode error on wsl with white pawn, quick fix...
-            bool unicode_pawn_flag = false;
-            if (piece != nullptr)
-            {
-            unicode_pawn_flag = ((piece->get_piece_type() == pawn) &&
-                                      (piece->get_colour() == black));
-            }
-
-            std::cout << (!unicode_pawn_flag ? "| ": "|") 
+            std::cout << "| "
                       << (piece != nullptr ? piece->get_piece_unicode() : " ") 
                       << " ";
 

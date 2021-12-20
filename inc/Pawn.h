@@ -14,7 +14,7 @@ class Pawn : public ChessPiece {
 
         bool check_move(const char* initial_position,
                         const char* final_position) override; 
-        std::string get_piece_unicode() const override {return (colour == black ? "♟︎" : "♙");}
+        std::string get_piece_unicode() const override {return (colour == black ? "♟" : "♙");}
 
         bool get_move_flag() const {return has_moved;}
         void set_move_flag() {has_moved = true;}
