@@ -19,7 +19,8 @@ The program should run the chess game provided by `ChessMain.cpp` in the termina
 
 ## <center> **Making your own Chess Game** </center>
 
-I have added a python script that will allow you to create the scripts for your own chess game that you find on chess.com
+I have added a python script that will allow you to create the scripts for your own chess game that you find on chess.com.
+
 To run your own game do the following:
 
 1. Go to chess.com and find a game that you wish to run
