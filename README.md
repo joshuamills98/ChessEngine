@@ -26,7 +26,7 @@ To run your own game do the following:
 1. Go to chess.com and find a game that you wish to run
 2. Download the respective pgn file for the game
 3. Place the .pgn file in the `./Documents/InputPGNs/` folder, ensure that all white spaces are removed from the name
-4. Run the `./generate_games/ChessScriptWriter.py` with any version of python (no imported librarys required). A text file will be created in `./Documents/OutputMoveScripts/` corresponding to your input. 
+4. Run the `./generate_games/ChessScriptWriter.py` with any version of python (no non-core librarys required). A text file will be created in `./Documents/OutputMoveScripts/` corresponding to your input. 
 5. Copy the contents fo the text file into ChessMain.cpp so it replaces the currrent chessboard script
 
 # <center> **File Description**
